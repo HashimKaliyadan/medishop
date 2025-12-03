@@ -81,13 +81,15 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static"
-]
+# Static files (CSS, JS) - development & production
+STATIC_URL = '/static/'                          # URL prefix for static files
+STATICFILES_DIRS = [BASE_DIR / "static"]         # where you put your dev-only static files
+STATIC_ROOT = BASE_DIR / "staticfiles"           # production: collectstatic writes here
 
-AUTH_USER_MODEL = 'users.User'
-AUTH_PROFILE_MODULE = 'users.User'
+# Media files (user / admin uploads)
+MEDIA_URL = '/media/'                            # URL prefix for uploaded files
+MEDIA_ROOT = BASE_DIR / "media"                  # location where uploaded files are stored
 
+#AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
