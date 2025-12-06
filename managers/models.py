@@ -11,3 +11,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Medicine(models.Model):
+        category = models.ForeignKey(
+            Category,
+            on_delete=models.CASCADE,
+            related_name='medicines',
+        )
