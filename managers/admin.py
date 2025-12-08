@@ -8,3 +8,10 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ("is_active",)
     search_fields = ("name",)
     prepopulated_fields = {"slug": ("name",)}
+
+@admin.register(Medicine)
+class MedicineAdmin(admin.ModelAdmin):
+    list_display = ("name", "category", "price", "in_stock", "is_prescription_required")
+    list_filter = ("category", "in_stock", "is_prescription_required")
+    search_fields = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
