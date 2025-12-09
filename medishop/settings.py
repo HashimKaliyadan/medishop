@@ -94,6 +94,6 @@ STATIC_ROOT = BASE_DIR / "staticfiles"           # production: collectstatic wri
 MEDIA_URL = '/media/'                            # URL prefix for uploaded files
 MEDIA_ROOT = BASE_DIR / "media"                  # location where uploaded files are stored
 
-#AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
