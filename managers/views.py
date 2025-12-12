@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from main.decorators import allow_manager
 
-# Create your views here.
+@allow_manager
+def manager_home(request):
+    return render(request, "managers/home.html")
