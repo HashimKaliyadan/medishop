@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Manager Dashboard</h1>
+
+<div class="grid grid-cols-3 gap-6">
+    <div class="p-4 bg-blue-100 rounded">
+        <h2 class="text-lg font-semibold">Categories</h2>
+        <p class="text-2xl">{{ total_categories }}</p>
+    </div>
+
+    <div class="p-4 bg-green-100 rounded">
+        <h2 class="text-lg font-semibold">Medicines</h2>
+        <p class="text-2xl">{{ total_medicines }}</p>
+    </div>
+
+    <div class="p-4 bg-yellow-100 rounded">
+        <h2 class="text-lg font-semibold">Orders</h2>
+        <p class="text-2xl">{{ total_orders }}</p>
+    </div>
+</div>
+{% endblock %}
