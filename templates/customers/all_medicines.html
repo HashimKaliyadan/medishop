@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">All Medicines</h1>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+  {% for m in medicines %}
+    <a href="{% url 'customers:medicine-detail' m.slug %}"
+       class="block p-4 bg-white border rounded hover:shadow">
+      <h2 class="font-semibold">{{ m.name }}</h2>
+      <p class="text-sm">₹{{ m.price }}</p>
+    </a>
+  {% empty %}
+    <p>No medicines available.</p>
+  {% endfor %}
+</div>
+{% endblock %}

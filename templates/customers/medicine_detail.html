@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="grid md:grid-cols-2 gap-6">
+  {% if medicine.image %}
+    <img src="{{ medicine.image.url }}" class="w-full h-64 object-cover">
+  {% endif %}
+
+  <div>
+    <h1 class="text-2xl font-bold">{{ medicine.name }}</h1>
+    <p class="text-gray-600 mt-2">{{ medicine.description }}</p>
+
+    <p class="mt-4 text-xl font-semibold">₹{{ medicine.price }}</p>
+
+    {% if medicine.is_prescription_required %}
+      <p class="mt-2 text-red-600">
+        Prescription required for this medicine
+      </p>
+    {% endif %}
+
+    {% if medicine.in_stock %}
+      <p class="mt-2 text-green-600">In stock</p>
+    {% else %}
+      <p class="mt-2 text-gray-500">Out of stock</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

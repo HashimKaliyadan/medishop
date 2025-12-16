@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">
+  Medicines in {{ category.name }}
+</h1>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+  {% for m in medicines %}
+    <a href="{% url 'customers:medicine-detail' m.slug %}"
+       class="block p-4 bg-white border rounded hover:shadow">
+      {% if m.image %}
+        <img src="{{ m.image.url }}" class="h-32 w-full object-cover mb-2">
+      {% endif %}
+      <h2 class="font-semibold">{{ m.name }}</h2>
+      <p class="text-sm text-gray-600">₹{{ m.price }}</p>
+      {% if m.is_prescription_required %}
+        <p class="text-xs text-red-600 mt-1">Prescription required</p>
+      {% endif %}
+    </a>
+  {% empty %}
+    <p>No medicines found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

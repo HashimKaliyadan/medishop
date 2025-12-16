@@ -1,29 +1,52 @@
-<!-- templates/home.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Medishop</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            background: #000;
-            color: white;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        h1 {
-            font-size: 4rem;
-            font-weight: 900;
-            letter-spacing: 0.1em;
-        }
-    </style>
-</head>
-<body>
-    <h1>MEDISHOP</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<section class="min-h-[70vh] flex flex-col justify-center items-center text-center">
+    
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-widest text-blue-600">
+        MEDISHOP
+    </h1>
+
+    <p class="mt-6 text-gray-600 text-lg max-w-xl">
+        Trusted online medicine delivery.  
+        Browse medicines, upload prescriptions, and get fast doorstep delivery.
+    </p>
+
+    <div class="mt-10 flex gap-4 flex-wrap justify-center">
+        <a href="{% url 'customers:category-list' %}">
+           class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700 transition">
+            Shop by Category
+        </a>
+
+        <a href="{% url 'customers:medicine-list' %}"
+           class="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg text-lg hover:bg-blue-50 transition">
+            View All Medicines
+        </a>
+    </div>
+
+</section>
+
+<!-- FEATURES -->
+<section class="grid md:grid-cols-3 gap-6 mt-16 text-center">
+    <div class="p-6 bg-white rounded shadow">
+        <h3 class="text-xl font-semibold mb-2">Genuine Medicines</h3>
+        <p class="text-gray-600 text-sm">
+            100% authentic medicines sourced from licensed pharmacies.
+        </p>
+    </div>
+
+    <div class="p-6 bg-white rounded shadow">
+        <h3 class="text-xl font-semibold mb-2">Prescription Safety</h3>
+        <p class="text-gray-600 text-sm">
+            Upload prescriptions securely for regulated medicines.
+        </p>
+    </div>
+
+    <div class="p-6 bg-white rounded shadow">
+        <h3 class="text-xl font-semibold mb-2">Fast Delivery</h3>
+        <p class="text-gray-600 text-sm">
+            Quick and reliable delivery to your doorstep.
+        </p>
+    </div>
+</section>
+{% endblock %}
