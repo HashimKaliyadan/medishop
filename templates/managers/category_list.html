@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Categories</h1>
+
+<a href="{% url 'managers:category-add' %}"
+   class="inline-block mb-4 bg-green-600 text-white px-3 py-1 rounded">
+  + Add Category
+</a>
+
+<table class="w-full border-collapse">
+  <tr class="bg-gray-100">
+    <th class="border p-2 text-left">Name</th>
+    <th class="border p-2 text-left">Active</th>
+    <th class="border p-2 text-left">Actions</th>
+  </tr>
+  {% for c in categories %}
+  <tr>
+    <td class="border p-2">{{ c.name }}</td>
+    <td class="border p-2">{{ c.is_active }}</td>
+    <td class="border p-2">
+      <a href="{% url 'managers:category-edit' c.pk %}" class="text-blue-600 underline mr-2">Edit</a>
+      <a href="{% url 'managers:category-delete' c.pk %}" class="text-red-600 underline">Delete</a>
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="3" class="p-4 text-center text-gray-500">No categories yet.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

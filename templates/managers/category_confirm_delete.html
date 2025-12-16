@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-xl font-bold mb-4">Delete Category</h1>
+<p>Delete <strong>{{ category.name }}</strong>?</p>
+
+<form method="post" class="mt-4">
+  {% csrf_token %}
+  <button class="bg-red-600 text-white px-4 py-2 rounded">Yes, delete</button>
+  <a href="{% url 'managers:category-list' %}" class="ml-4 text-blue-600 underline">Cancel</a>
+</form>
+{% endblock %}
