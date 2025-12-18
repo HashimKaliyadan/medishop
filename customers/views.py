@@ -138,3 +138,9 @@ def order_success(request, order_id):
     order = Order.objects.get(id=order_id, user=request.user)
     return render(request, "customers/order_success.html", {"order": order})
 
+@login_required
+def order_list(request):
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "customers/order_list.html", {
+        "orders": orders
+    })
