@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from managers.models import Category, Medicine
-from .models import Cart, CartItem
+from .models import Cart, CartItem, Order, OrderItem, Address
 from django.contrib.auth.decorators import login_required
 
 def customer_home(request):
@@ -77,3 +77,64 @@ def remove_from_cart(request, item_id):
     item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     item.delete()
     return redirect("customers:cart")
+
+@login_required
+def checkout(request):
+    cart = Cart.objects.filter(user=request.user).first()
+
+    if not cart or not cart.items.exists():
+        return redirect("customers:cart")
+
+    # check if prescription is required
+    prescription_required = any(
+        item.medicine.is_prescription_required
+        for item in cart.items.all()
+    )
+
+    if request.method == "POST":
+        address_text = request.POST.get("address")
+        pincode = request.POST.get("pincode")
+        prescription = request.FILES.get("prescription")
+
+        if prescription_required and not prescription:
+            return render(request, "customers/checkout.html", {
+                "cart": cart,
+                "error": "Prescription required for one or more medicines.",
+                "prescription_required": prescription_required,
+            })
+
+        address = Address.objects.create(
+            user=request.user,
+            address=address_text,
+            pincode=pincode
+        )
+
+        order = Order.objects.create(
+            user=request.user,
+            address=address,
+            total=cart.total,
+            prescription=prescription
+        )
+
+        for item in cart.items.all():
+            OrderItem.objects.create(
+                order=order,
+                medicine=item.medicine,
+                quantity=item.quantity,
+                price=item.medicine.price
+            )
+
+        cart.items.all().delete()  # clear cart
+
+        return redirect("customers:order-success", order_id=order.id)
+
+    return render(request, "customers/checkout.html", {
+        "cart": cart,
+        "prescription_required": prescription_required,
+    })
+
+@login_required
+def order_success(request, order_id):
+    order = Order.objects.get(id=order_id, user=request.user)
+    return render(request, "customers/order_success.html", {"order": order})
+
