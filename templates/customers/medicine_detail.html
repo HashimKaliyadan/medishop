@@ -2,6 +2,7 @@
 
 {% block content %}
 <div class="grid md:grid-cols-2 gap-6">
+
   {% if medicine.image %}
     <img src="{{ medicine.image.url }}" class="w-full h-64 object-cover">
   {% endif %}
@@ -20,9 +21,15 @@
 
     {% if medicine.in_stock %}
       <p class="mt-2 text-green-600">In stock</p>
+
+      <a href="{% url 'customers:add-to-cart' medicine.id %}"
+         class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded">
+        Add to Cart
+      </a>
     {% else %}
       <p class="mt-2 text-gray-500">Out of stock</p>
     {% endif %}
   </div>
+
 </div>
 {% endblock %}
