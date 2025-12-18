@@ -104,3 +104,21 @@ def category_delete(request, pk):
     return render(request, "managers/category_confirm_delete.html", {
         "category": category
     })
+
+@allow_manager
+def order_list(request):
+    orders = Order.objects.all().order_by("-created_at")
+    return render(request, "managers/order_list.html", {
+        "orders": orders
+    })
+
+@allow_manager
+def update_order_status(request, order_id):
+    order = Order.objects.get(id=order_id)
+
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+        order.status = new_status
+        order.save()
+
+    return redirect("managers:order-list")
