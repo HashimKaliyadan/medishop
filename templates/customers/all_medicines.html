@@ -3,15 +3,45 @@
 {% block content %}
 <h1 class="text-2xl font-bold mb-6">All Medicines</h1>
 
+<!-- SEARCH & FILTER -->
+<form method="get" class="flex gap-4 mb-6 flex-wrap">
+  <input
+    type="text"
+    name="q"
+    value="{{ query }}"
+    placeholder="Search medicines..."
+    class="border p-2 flex-1 min-w-[200px]"
+  >
+
+  <select name="category" class="border p-2">
+    <option value="">All Categories</option>
+    {% for c in categories %}
+      <option value="{{ c.slug }}"
+        {% if selected_category == c.slug %}selected{% endif %}>
+        {{ c.name }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <button class="bg-blue-600 text-white px-4 py-2 rounded">
+    Search
+  </button>
+</form>
+
+<!-- MEDICINE GRID -->
 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
   {% for m in medicines %}
     <a href="{% url 'customers:medicine-detail' m.slug %}"
-       class="block p-4 bg-white border rounded hover:shadow">
+       class="block p-4 bg-white border rounded hover:shadow transition">
       <h2 class="font-semibold">{{ m.name }}</h2>
-      <p class="text-sm">₹{{ m.price }}</p>
+      <p class="text-sm text-gray-600">₹{{ m.price }}</p>
+
+      {% if m.is_prescription_required %}
+        <p class="text-xs text-red-600 mt-1">Prescription required</p>
+      {% endif %}
     </a>
   {% empty %}
-    <p>No medicines available.</p>
+    <p class="text-gray-500">No medicines found.</p>
   {% endfor %}
 </div>
 {% endblock %}

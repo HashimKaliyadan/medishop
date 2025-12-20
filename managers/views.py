@@ -3,15 +3,32 @@ from main.decorators import allow_manager
 from managers.models import Category, Medicine
 from customers.models import Order
 from .forms import MedicineForm, CategoryForm
+from django.utils.timezone import now
+from django.db.models import Sum
 
 
 @allow_manager
 def dashboard(request):
+    today = now().date()
+
+    total_categories = Category.objects.count()
+    total_medicines = Medicine.objects.count()
+    total_orders = Order.objects.count()
+
+    today_orders = Order.objects.filter(created_at__date=today).count()
+    today_revenue = (
+        Order.objects.filter(created_at__date=today)
+        .aggregate(total=Sum("total"))["total"] or 0
+    )
+
     context = {
-        "total_categories": Category.objects.count(),
-        "total_medicines": Medicine.objects.count(),
-        "total_orders": Order.objects.count(),
+        "total_categories": total_categories,
+        "total_medicines": total_medicines,
+        "total_orders": total_orders,
+        "today_orders": today_orders,
+        "today_revenue": today_revenue,
     }
+
     return render(request, "managers/dashboard.html", context)
 
 @allow_manager

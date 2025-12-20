@@ -17,17 +17,27 @@ def register_view(request):
     return render(request, "users/register.html", {"form": form})
 
 
+from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login
+
 def login_view(request):
     if request.method == "POST":
-        form = EmailAuthenticationForm(request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
             login(request, user)
-            next_url = request.GET.get("next") or reverse("customers:home")
-            return redirect(next_url)
-    else:
-        form = EmailAuthenticationForm()
-    return render(request, "users/login.html", {"form": form})
+
+            # 🔑 ROLE-BASED REDIRECT
+            if getattr(user, "is_manager", False):
+                return redirect("managers:dashboard")
+            else:
+                return redirect("customers:home")
+
+    return render(request, "users/login.html")
+
 
 
 def logout_view(request):

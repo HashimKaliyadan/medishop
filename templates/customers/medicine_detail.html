@@ -1,35 +1,62 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="grid md:grid-cols-2 gap-6">
+<div class="grid md:grid-cols-2 gap-8 items-start">
 
-  {% if medicine.image %}
-    <img src="{{ medicine.image.url }}" class="w-full h-64 object-cover">
-  {% endif %}
-
-  <div>
-    <h1 class="text-2xl font-bold">{{ medicine.name }}</h1>
-    <p class="text-gray-600 mt-2">{{ medicine.description }}</p>
-
-    <p class="mt-4 text-xl font-semibold">₹{{ medicine.price }}</p>
-
-    {% if medicine.is_prescription_required %}
-      <p class="mt-2 text-red-600">
-        Prescription required for this medicine
-      </p>
-    {% endif %}
-
-    {% if medicine.in_stock %}
-      <p class="mt-2 text-green-600">In stock</p>
-
-      <a href="{% url 'customers:add-to-cart' medicine.id %}"
-         class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded">
-        Add to Cart
-      </a>
+  <!-- IMAGE -->
+  <div class="bg-white border rounded p-4">
+    {% if medicine.image %}
+      <img
+        src="{{ medicine.image.url }}"
+        alt="{{ medicine.name }}"
+        class="w-full h-72 object-cover rounded"
+      >
     {% else %}
-      <p class="mt-2 text-gray-500">Out of stock</p>
+      <div class="h-72 flex items-center justify-center text-gray-400">
+        No image available
+      </div>
     {% endif %}
   </div>
 
+  <!-- DETAILS -->
+  <div>
+    <h1 class="text-3xl font-bold">{{ medicine.name }}</h1>
+
+    {% if medicine.category %}
+      <p class="text-sm text-gray-500 mt-1">
+        Category: {{ medicine.category.name }}
+      </p>
+    {% endif %}
+
+    <p class="text-gray-700 mt-4 leading-relaxed">
+      {{ medicine.description|default:"No description available." }}
+    </p>
+
+    <p class="mt-6 text-2xl font-semibold">
+      ₹{{ medicine.price }}
+    </p>
+
+    <!-- PRESCRIPTION NOTICE -->
+    {% if medicine.is_prescription_required %}
+      <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
+        <p class="text-red-600 text-sm font-medium">
+          ⚠ Prescription required for this medicine
+        </p>
+      </div>
+    {% endif %}
+
+    <!-- STOCK & ACTION -->
+    {% if medicine.in_stock %}
+      <p class="mt-4 text-green-600 font-semibold">✔ In stock</p>
+
+      <a href="{% url 'customers:add-to-cart' medicine.id %}"
+         class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700 transition">
+        Add to Cart
+      </a>
+    {% else %}
+      <p class="mt-4 text-red-600 font-semibold">✖ Out of stock</p>
+    {% endif %}
+
+  </div>
 </div>
 {% endblock %}
