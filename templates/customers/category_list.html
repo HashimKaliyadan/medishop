@@ -1,19 +1,69 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">Shop by Category</h1>
+<div class="bg-brand-50/50 border-b border-brand-100/50 py-12 mb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+        <span class="text-brand-600 font-semibold tracking-wide text-xs uppercase mb-2 block">Wellness Hub</span>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+            Shop by Health Concern
+        </h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            Find exactly what you need by browsing our specialized health categories. From daily supplements to prescription care.
+        </p>
+    </div>
+</div>
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-  {% for c in categories %}
-    <a href="{% url 'customers:medicine-by-category' c.slug %}"
-       class="block p-4 bg-white border rounded hover:shadow">
-      <h2 class="text-lg font-semibold">{{ c.name }}</h2>
-      {% if c.description %}
-        <p class="text-sm text-gray-600 mt-2">{{ c.description }}</p>
-      {% endif %}
-    </a>
-  {% empty %}
-    <p class="text-gray-500">No categories available.</p>
-  {% endfor %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+    
+    <nav class="flex text-sm text-gray-500 mb-8">
+        <a href="/" class="hover:text-brand-600 transition">Home</a>
+        <span class="mx-2">/</span>
+        <span class="text-gray-900 font-medium">Categories</span>
+    </nav>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for c in categories %}
+            <a href="{% url 'customers:medicine-by-category' c.slug %}" 
+               class="group relative bg-white rounded-2xl p-6 border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 ease-in-out overflow-hidden">
+                
+                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 rounded-full bg-brand-50 group-hover:bg-brand-100 transition-colors duration-300"></div>
+
+                <div class="relative w-14 h-14 rounded-xl flex items-center justify-center text-3xl mb-5 transition-transform group-hover:scale-110 duration-300
+                    {% cycle 'bg-blue-50 text-blue-600' 'bg-teal-50 text-teal-600' 'bg-purple-50 text-purple-600' 'bg-orange-50 text-orange-600' 'bg-rose-50 text-rose-600' %}">
+                    {% cycle '<i class="ph-fill ph-pill"></i>' '<i class="ph-fill ph-heartbeat"></i>' '<i class="ph-fill ph-first-aid-kit"></i>' '<i class="ph-fill ph-thermometer"></i>' '<i class="ph-fill ph-baby"></i>' %}
+                </div>
+
+                <div class="relative">
+                    <h2 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-600 transition-colors">
+                        {{ c.name }}
+                    </h2>
+                    
+                    <!-- {% if c.description %}
+                        <p class="text-sm text-gray-500 line-clamp-2 mb-4 h-10">
+                            {{ c.description }}
+                        </p>
+                    {% else %}
+                        <p class="text-sm text-gray-400 italic mb-4 h-10">
+                            Explore medicines in {{ c.name|lower }}...
+                        </p>
+                    {% endif %} -->
+
+                    <div class="flex items-center text-sm font-semibold text-brand-600 group-hover:underline">
+                        View Products <i class="ph-bold ph-arrow-right ml-1 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <div class="col-span-full py-12 text-center">
+                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                    <i class="ph-duotone ph-squares-four text-3xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900">No categories found</h3>
+                <p class="text-gray-500 mt-1">We are updating our inventory. Please check back soon.</p>
+                <a href="/" class="inline-block mt-4 text-brand-600 font-medium hover:underline">Return Home</a>
+            </div>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}

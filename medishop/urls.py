@@ -6,8 +6,8 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # smart role-based redirect (logo / login redirect)
-    path("", include("main.urls")),
+    # # smart role-based redirect (logo / login redirect)
+    # path("", include("main.urls")),
 
     # apps
     path("users/", include("users.urls")),

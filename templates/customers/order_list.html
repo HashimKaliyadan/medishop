@@ -1,26 +1,107 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">My Orders</h1>
+<div class="bg-gray-50/50 min-h-screen pb-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
 
-{% if orders %}
-<table class="w-full border">
-  <tr class="bg-gray-100">
-    <th class="p-2">Order ID</th>
-    <th class="p-2">Date</th>
-    <th class="p-2">Total</th>
-    <th class="p-2">Status</th>
-  </tr>
-  {% for o in orders %}
-  <tr>
-    <td class="p-2">#{{ o.id }}</td>
-    <td class="p-2">{{ o.created_at|date:"d M Y" }}</td>
-    <td class="p-2">₹{{ o.total }}</td>
-    <td class="p-2">{{ o.status }}</td>
-  </tr>
-  {% endfor %}
-</table>
-{% else %}
-<p>You have not placed any orders yet.</p>
-{% endif %}
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Order History</h1>
+                <p class="text-sm text-gray-500 mt-1">Track your past purchases and download invoices.</p>
+            </div>
+            
+            <a href="{% url 'customers:medicine-list' %}" class="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline">
+                Continue Shopping &rarr;
+            </a>
+        </div>
+
+        {% if orders %}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px]">
+                        <thead>
+                            <tr class="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                                <th class="px-6 py-4">Order ID</th>
+                                <th class="px-6 py-4">Date Placed</th>
+                                <th class="px-6 py-4">Total Amount</th>
+                                <th class="px-6 py-4 text-center">Status</th>
+                                <th class="px-6 py-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for o in orders %}
+                            <tr class="group hover:bg-gray-50/50 transition duration-150">
+                                
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                            <i class="ph-bold ph-receipt"></i>
+                                        </div>
+                                        <span class="font-mono text-sm font-medium text-gray-900">#{{ o.id }}</span>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <span class="text-sm text-gray-600">{{ o.created_at|date:"d M Y" }}</span>
+                                    <p class="text-xs text-gray-400">{{ o.created_at|date:"h:i A" }}</p>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <span class="font-bold text-gray-900">₹{{ o.total }}</span>
+                                </td>
+
+                                <td class="px-6 py-4 text-center">
+                                    {% if o.status == 'Pending' %}
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                            Processing
+                                        </span>
+                                    {% elif o.status == 'Delivered' %}
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                            <i class="ph-fill ph-check-circle"></i>
+                                            Delivered
+                                        </span>
+                                    {% elif o.status == 'Cancelled' %}
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+                                            <i class="ph-fill ph-x-circle"></i>
+                                            Cancelled
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                            {{ o.status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-sm font-medium text-gray-500 hover:text-brand-600 transition flex items-center justify-end gap-1 ml-auto">
+                                        View Details <i class="ph-bold ph-arrow-right"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-500">
+                    Showing last {{ orders|length }} orders
+                </div>
+            </div>
+
+        {% else %}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 text-center">
+                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-400">
+                    <i class="ph-duotone ph-package text-4xl"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-900 mb-2">No orders yet</h2>
+                <p class="text-gray-500 mb-8 max-w-sm mx-auto">Once you place an order, you can track its status and view details here.</p>
+                <a href="{% url 'customers:medicine-list' %}" class="bg-brand-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-brand-700 transition shadow-lg shadow-brand-200">
+                    Start Shopping
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

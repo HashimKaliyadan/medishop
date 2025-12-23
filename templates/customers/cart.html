@@ -1,65 +1,134 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Your Cart</h1>
+<div class="bg-gray-50/50 min-h-screen pb-16">
 
-{% if cart.items.all %}
-<table class="w-full border">
-  <tr class="bg-gray-100">
-    <th class="p-2">Medicine</th>
-    <th class="p-2">Qty</th>
-    <th class="p-2">Price</th>
-    <th class="p-2">Total</th>
-    <th class="p-2">Action</th>
-  </tr>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <h1 class="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
+            <i class="ph-duotone ph-shopping-cart text-brand-600"></i>
+            Shopping Cart
+            <span class="text-sm font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full ml-2">
+                {{ cart.items.count }} Items
+            </span>
+        </h1>
 
-  {% for item in cart.items.all %}
-  <tr>
-    <td class="p-2">{{ item.medicine.name }}</td>
+        {% if cart.items.all %}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                
+                <div class="lg:col-span-2 space-y-4">
+                    {% for item in cart.items.all %}
+                        <div class="group bg-white rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm hover:shadow-md transition duration-200 flex flex-col sm:flex-row gap-6">
+                            
+                            <div class="w-full sm:w-24 h-24 bg-gray-50 rounded-xl flex items-center justify-center overflow-hidden shrink-0 border border-gray-100">
+                                {% if item.medicine.image %}
+                                    <img src="{{ item.medicine.image.url }}" alt="{{ item.medicine.name }}" class="w-full h-full object-contain p-2 mix-blend-multiply">
+                                {% else %}
+                                    <i class="ph-duotone ph-pill text-3xl text-gray-400"></i>
+                                {% endif %}
+                            </div>
 
-    <td class="p-2">
-      <form method="post" action="{% url 'customers:update-cart' item.id %}" class="flex gap-2 items-center">
-        {% csrf_token %}
-        <input type="number"
-               name="quantity"
-               value="{{ item.quantity }}"
-               min="1"
-               max="10"
-               class="w-16 border px-1">
-        <button class="text-blue-600 underline">Update</button>
-      </form>
-    </td>
+                            <div class="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="font-bold text-gray-900 text-lg leading-tight">
+                                            <a href="{% url 'customers:medicine-detail' item.medicine.slug %}" class="hover:text-brand-600 transition">
+                                                {{ item.medicine.name }}
+                                            </a>
+                                        </h3>
+                                        <span class="hidden sm:block font-bold text-gray-900 text-lg">₹{{ item.line_total }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">Unit Price: ₹{{ item.medicine.price }}</p>
+                                    
+                                    {% if item.medicine.is_prescription_required %}
+                                        <div class="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+                                            <i class="ph-fill ph-prescription"></i> Rx Required
+                                        </div>
+                                    {% endif %}
+                                </div>
 
-    <td class="p-2">₹{{ item.medicine.price }}</td>
-    <td class="p-2">₹{{ item.line_total }}</td>
+                                <div class="flex flex-wrap items-end justify-between gap-4 mt-4">
+                                    
+                                    <form method="post" action="{% url 'customers:update-cart' item.id %}" class="flex items-center gap-2">
+                                        {% csrf_token %}
+                                        <label class="text-xs text-gray-500 font-medium uppercase">Qty:</label>
+                                        <div class="relative">
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10"
+                                                   class="w-16 pl-3 pr-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-center font-medium">
+                                        </div>
+                                        <button type="submit" class="p-2 text-brand-600 hover:bg-brand-50 rounded-lg transition" title="Update Quantity">
+                                            <i class="ph-bold ph-arrows-clockwise"></i>
+                                        </button>
+                                    </form>
 
-    <td class="p-2">
-      <form method="post" action="{% url 'customers:remove-from-cart' item.id %}">
-        {% csrf_token %}
-        <button type="submit" class="text-red-600 underline">
-          Remove
-        </button>
-      </form>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
+                                    <form method="post" action="{% url 'customers:remove-from-cart' item.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="flex items-center gap-1.5 text-sm font-medium text-gray-400 hover:text-red-600 transition group/btn">
+                                            <i class="ph-bold ph-trash text-lg group-hover/btn:scale-110 transition-transform"></i>
+                                            <span class="underline decoration-transparent group-hover/btn:decoration-red-600 transition-all">Remove</span>
+                                        </button>
+                                    </form>
 
-<p class="mt-4 font-semibold text-lg">
-  Total: ₹{{ cart.total }}
-</p>
+                                    <span class="sm:hidden font-bold text-gray-900 text-lg ml-auto">₹{{ item.line_total }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
 
-<a href="{% url 'customers:checkout' %}"
-   class="inline-block mt-4 bg-green-600 text-white px-6 py-2 rounded">
-   Proceed to Checkout
-</a>
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-100 p-6 sticky top-24">
+                        <h2 class="text-lg font-bold text-gray-900 mb-6">Order Summary</h2>
+                        
+                        <div class="space-y-4 text-sm text-gray-600 border-b border-gray-100 pb-6 mb-6">
+                            <div class="flex justify-between">
+                                <span>Subtotal</span>
+                                <span class="font-medium text-gray-900">₹{{ cart.total }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Shipping Estimate</span>
+                                <span class="text-green-600 font-medium">Free</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tax Estimate</span>
+                                <span class="text-gray-400">Calculated at checkout</span>
+                            </div>
+                        </div>
 
-{% else %}
-<p class="text-gray-500">
-  Your cart is empty.
-  <a href="{% url 'customers:medicine-list' %}" class="text-blue-600 underline">
-    Browse medicines
-  </a>
-</p>
-{% endif %}
+                        <div class="flex justify-between items-end mb-8">
+                            <span class="text-base font-bold text-gray-900">Total Amount</span>
+                            <span class="text-2xl font-extrabold text-brand-700">₹{{ cart.total }}</span>
+                        </div>
+
+                        <a href="{% url 'customers:checkout' %}" 
+                           class="w-full flex items-center justify-center gap-2 bg-brand-600 text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-200 hover:bg-brand-700 hover:-translate-y-1 transition transform">
+                            Proceed to Checkout <i class="ph-bold ph-arrow-right"></i>
+                        </a>
+
+                        <div class="mt-6 flex justify-center gap-4 text-gray-300">
+                            <i class="ph-fill ph-lock-key text-2xl" title="Secure Payment"></i>
+                            <i class="ph-fill ph-shield-check text-2xl" title="Genuine Products"></i>
+                            <i class="ph-fill ph-credit-card text-2xl" title="All Cards Accepted"></i>
+                        </div>
+                        <p class="text-xs text-center text-gray-400 mt-2">100% Secure Transaction</p>
+                    </div>
+                </div>
+
+            </div>
+
+        {% else %}
+            <div class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-6 text-brand-200">
+                    <i class="ph-fill ph-shopping-cart text-5xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h2>
+                <p class="text-gray-500 mb-8 max-w-sm text-center">Looks like you haven't added any medicines to your cart yet.</p>
+                <a href="{% url 'customers:medicine-list' %}" class="bg-brand-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-brand-700 transition shadow-lg shadow-brand-200">
+                    Browse Medicines
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

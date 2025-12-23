@@ -1,25 +1,118 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-6">
-  Medicines in {{ category.name }}
-</h1>
+<div class="bg-gray-50/50 min-h-screen pb-16">
 
-<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-  {% for m in medicines %}
-    <a href="{% url 'customers:medicine-detail' m.slug %}"
-       class="block p-4 bg-white border rounded hover:shadow">
-      {% if m.image %}
-        <img src="{{ m.image.url }}" class="h-32 w-full object-cover mb-2">
-      {% endif %}
-      <h2 class="font-semibold">{{ m.name }}</h2>
-      <p class="text-sm text-gray-600">₹{{ m.price }}</p>
-      {% if m.is_prescription_required %}
-        <p class="text-xs text-red-600 mt-1">Prescription required</p>
-      {% endif %}
-    </a>
-  {% empty %}
-    <p>No medicines found.</p>
-  {% endfor %}
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+            
+            <nav class="flex items-center text-sm text-gray-500 mb-4">
+                <a href="/" class="hover:text-brand-600 transition">Home</a>
+                <i class="ph ph-caret-right mx-2 text-xs"></i>
+                <a href="{% url 'customers:category-list' %}" class="hover:text-brand-600 transition">Categories</a>
+                <i class="ph ph-caret-right mx-2 text-xs"></i>
+                <span class="font-medium text-gray-900">{{ category.name }}</span>
+            </nav>
+
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">{{ category.name }}</h1>
+                    <p class="text-sm text-gray-500 mt-1">
+                        Found <span class="font-semibold text-gray-900">{{ medicines|length }}</span> products for your health needs.
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button class="flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition">
+                        Sort by: Relevance <i class="ph-bold ph-caret-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {% for m in medicines %}
+                <div class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 flex flex-col relative overflow-hidden">
+                    
+                    <a href="{% url 'customers:medicine-detail' m.slug %}" class="block relative">
+                        
+                        <div class="absolute top-3 left-3 z-10 flex flex-col gap-2">
+                            {% if m.is_prescription_required %}
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-100 shadow-sm">
+                                    <i class="ph-fill ph-prescription"></i> Rx
+                                </span>
+                            {% endif %}
+                            
+                            {% if not m.in_stock %}
+                                <span class="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-gray-100 text-gray-500 border border-gray-200">
+                                    Out of Stock
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <div class="h-48 w-full bg-gray-50 flex items-center justify-center overflow-hidden relative">
+                            {% if m.image %}
+                                <img src="{{ m.image.url }}" alt="{{ m.name }}" 
+                                     class="w-full h-full object-contain p-4 group-hover:scale-105 transition duration-500">
+                            {% else %}
+                                <i class="ph-duotone ph-pill text-4xl text-gray-300 group-hover:text-brand-300 transition"></i>
+                            {% endif %}
+                            
+                            {% if not m.in_stock %}
+                                <div class="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
+                                    <span class="bg-gray-800 text-white text-xs font-bold px-3 py-1 rounded-full">Sold Out</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </a>
+
+                    <div class="p-4 flex-1 flex flex-col">
+                        <p class="text-[10px] font-semibold text-brand-600 uppercase tracking-wider mb-1">
+                            {{ category.name }}
+                        </p>
+
+                        <h3 class="text-base font-bold text-gray-900 leading-snug mb-2 group-hover:text-brand-600 transition line-clamp-2 min-h-[2.5rem]">
+                            <a href="{% url 'customers:medicine-detail' m.slug %}">
+                                {{ m.name }}
+                            </a>
+                        </h3>
+
+                        <div class="mt-auto flex items-center justify-between pt-3 border-t border-gray-50">
+                            <div>
+                                <span class="text-lg font-bold text-gray-900">₹{{ m.price }}</span>
+                                {% if m.is_prescription_required %}
+                                    <p class="text-[10px] text-gray-400">Rx Required</p>
+                                {% endif %}
+                            </div>
+
+                            <a href="{% url 'customers:medicine-detail' m.slug %}" 
+                               class="w-8 h-8 rounded-full flex items-center justify-center transition 
+                               {% if m.in_stock %}
+                                   bg-brand-50 text-brand-600 hover:bg-brand-600 hover:text-white
+                               {% else %}
+                                   bg-gray-100 text-gray-300 cursor-not-allowed
+                               {% endif %}">
+                                <i class="ph-bold ph-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-span-full py-16 text-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                        <i class="ph-duotone ph-magnifying-glass text-4xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900">No products found</h2>
+                    <p class="text-gray-500 mt-2 mb-6">We couldn't find any medicines in the category <strong>"{{ category.name }}"</strong>.</p>
+                    <a href="{% url 'customers:category-list' %}" class="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-brand-700 transition">
+                        Browse all Categories
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

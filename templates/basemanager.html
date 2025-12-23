@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Manager Dashboard | Medishop{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0fdfa', 100: '#ccfbf1', 500: '#14b8a6', 600: '#0d9488', 700: '#0f766e', 900: '#134e4a' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased overflow-hidden">
+
+    <div class="flex h-screen">
+
+        <aside class="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col z-20 shrink-0">
+            <div class="h-16 flex items-center px-6 border-b border-slate-100">
+                <div class="flex items-center gap-2 text-brand-600">
+                    <i class="ph-fill ph-first-aid text-2xl"></i>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">Medishop<span class="text-brand-600">.Admin</span></span>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-6 px-3 space-y-1">
+                <a href="{% url 'managers:dashboard' %}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                   {% if request.resolver_match.url_name == 'dashboard' %} bg-brand-50 text-brand-700 {% else %} text-slate-600 hover:bg-slate-50 hover:text-brand-600 {% endif %}">
+                    <i class="ph-bold ph-squares-four text-lg"></i>
+                    Dashboard
+                </a>
+
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mt-6 mb-2">Commerce</p>
+                
+                <a href="{% url 'managers:order-list' %}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                   {% if 'order' in request.resolver_match.url_name %} bg-brand-50 text-brand-700 {% else %} text-slate-600 hover:bg-slate-50 hover:text-brand-600 {% endif %}">
+                    <i class="ph-bold ph-shopping-cart text-lg"></i>
+                    Orders
+                </a>
+
+                <a href="{% url 'managers:medicine-list' %}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                   {% if 'medicine' in request.resolver_match.url_name %} bg-brand-50 text-brand-700 {% else %} text-slate-600 hover:bg-slate-50 hover:text-brand-600 {% endif %}">
+                    <i class="ph-bold ph-pill text-lg"></i>
+                    Medicines
+                </a>
+
+                <a href="{% url 'managers:category-list' %}" 
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium transition
+                   {% if 'category' in request.resolver_match.url_name %} bg-brand-50 text-brand-700 {% else %} text-slate-600 hover:bg-slate-50 hover:text-brand-600 {% endif %}">
+                    <i class="ph-bold ph-tag text-lg"></i>
+                    Categories
+                </a>
+
+                <p class="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mt-6 mb-2">System</p>
+                
+                <a href="/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-brand-600 transition">
+                    <i class="ph-bold ph-arrow-square-out text-lg"></i>
+                    View Live Site
+                </a>
+                
+                <a href="{% url 'users:logout' %}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-600 hover:bg-red-50 transition">
+                    <i class="ph-bold ph-sign-out text-lg"></i>
+                    Logout
+                </a>
+            </nav>
+
+            <div class="border-t border-slate-100 p-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+                        <i class="ph-fill ph-user text-xl"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-sm font-semibold text-slate-900 truncate">{{ request.user.username }}</p>
+                        <p class="text-xs text-slate-500 truncate">Manager</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 md:hidden shrink-0">
+                <span class="font-bold text-lg text-brand-600">Medishop Admin</span>
+                <button class="text-slate-500"><i class="ph-bold ph-list text-2xl"></i></button>
+            </header>
+
+            <div class="flex-1 overflow-y-auto p-6 lg:p-10 bg-slate-50">
+                
+                {% if messages %}
+                    <div class="mb-6 space-y-2">
+                        {% for message in messages %}
+                            <div class="p-4 rounded-xl border flex items-center gap-3 text-sm font-medium
+                                {% if message.tags == 'success' %} bg-green-50 border-green-100 text-green-700
+                                {% elif message.tags == 'error' %} bg-red-50 border-red-100 text-red-700
+                                {% else %} bg-blue-50 border-blue-100 text-blue-700 {% endif %}">
+                                <i class="ph-fill ph-info"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
+                
+                <div class="mt-12 text-center text-xs text-slate-400">
+                    &copy; {% now "Y" %} Medishop Admin Panel. v1.0
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

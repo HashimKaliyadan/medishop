@@ -1,32 +1,174 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Checkout</h1>
+<div class="bg-gray-50/50 min-h-screen pb-16">
 
-{% if error %}
-<p class="text-red-600 mb-4">{{ error }}</p>
-{% endif %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <h1 class="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2">
+            <i class="ph-duotone ph-shield-check text-brand-600"></i>
+            Secure Checkout
+        </h1>
 
-<form method="post" enctype="multipart/form-data" class="space-y-4">
-  {% csrf_token %}
+        {% if error %}
+            <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 text-red-700 animate-fade-in">
+                <i class="ph-fill ph-warning-circle text-xl mt-0.5"></i>
+                <div>
+                    <h3 class="font-bold text-sm">Please Correct the Following:</h3>
+                    <p class="text-sm">{{ error }}</p>
+                </div>
+            </div>
+        {% endif %}
 
-  <textarea name="address" required
-    class="w-full border p-2"
-    placeholder="Delivery address"></textarea>
+        <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            {% csrf_token %}
 
-  <input type="text" name="pincode" required
-    class="w-full border p-2"
-    placeholder="Pincode">
+            <div class="lg:col-span-2 space-y-6">
 
-  {% if prescription_required %}
-    <div>
-      <label class="font-semibold">Upload Prescription</label>
-      <input type="file" name="prescription" required>
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center text-xs font-bold">1</span>
+                        Shipping Address
+                    </h2>
+
+                    <div class="space-y-5">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 1</label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-3 pointer-events-none text-gray-400">
+                                    <i class="ph ph-map-pin text-lg"></i>
+                                </div>
+                                <input type="text" name="line1" required placeholder="House No, Building, Street Name"
+                                    class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2 <span class="text-gray-400 font-normal">(Optional)</span></label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-3 pointer-events-none text-gray-400">
+                                    <i class="ph ph-buildings text-lg"></i>
+                                </div>
+                                <input type="text" name="line2" placeholder="Landmark, Apartment, Area"
+                                    class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                <div class="relative">
+                                    <div class="absolute top-3 left-3 pointer-events-none text-gray-400">
+                                        <i class="ph ph-city text-lg"></i>
+                                    </div>
+                                    <input type="text" name="city" required placeholder="City Name"
+                                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
+                                <div class="relative">
+                                    <div class="absolute top-3 left-3 pointer-events-none text-gray-400">
+                                        <i class="ph ph-hash text-lg"></i>
+                                    </div>
+                                    <input type="text" name="pincode" required placeholder="e.g. 673001"
+                                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <div class="relative">
+                                <div class="absolute top-3 left-3 pointer-events-none text-gray-400">
+                                    <i class="ph ph-phone text-lg"></i>
+                                </div>
+                                <input type="text" name="phone" required placeholder="10-digit mobile number"
+                                    class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition outline-none">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                {% if prescription_required %}
+                <div class="bg-amber-50 p-6 md:p-8 rounded-2xl border border-amber-200 relative overflow-hidden">
+                    <h2 class="text-lg font-bold text-amber-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-amber-200 text-amber-800 flex items-center justify-center text-xs font-bold">2</span>
+                        Prescription Required
+                    </h2>
+                    <p class="text-sm text-amber-700 mb-6 max-w-lg">
+                        Items in your cart require a valid doctor's prescription. Please upload a clear image to proceed.
+                    </p>
+
+                    <div class="bg-white p-6 rounded-xl border-2 border-dashed border-amber-300 hover:border-amber-500 transition text-center group cursor-pointer relative">
+                        <input type="file" name="prescription" required class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                        <div class="flex flex-col items-center justify-center space-y-2">
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center group-hover:scale-110 transition">
+                                <i class="ph-bold ph-upload-simple text-2xl"></i>
+                            </div>
+                            <span class="font-medium text-gray-900 group-hover:text-amber-700">Click to upload file</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-gray-100 p-6 sticky top-24">
+                    <h2 class="text-lg font-bold text-gray-900 mb-6">Order Summary</h2>
+
+                    <div class="max-h-64 overflow-y-auto space-y-4 mb-6 pr-2 scrollbar-hide">
+                        {% for item in cart.items.all %}
+                        <div class="flex items-start gap-3">
+                            <div class="w-12 h-12 bg-gray-50 rounded-lg border border-gray-100 flex items-center justify-center shrink-0">
+                                {% if item.medicine.image %}
+                                    <img src="{{ item.medicine.image.url }}" class="w-full h-full object-contain p-1">
+                                {% else %}
+                                    <i class="ph-duotone ph-pill text-gray-400"></i>
+                                {% endif %}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">{{ item.medicine.name }}</p>
+                                <p class="text-xs text-gray-500">Qty: {{ item.quantity }}</p>
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">₹{{ item.line_total }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="border-t border-gray-100 pt-4 space-y-2 text-sm text-gray-600 mb-6">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span class="font-medium text-gray-900">₹{{ cart.total }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping</span>
+                            <span class="text-green-600 font-medium">Free</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-end mb-6 pt-4 border-t border-gray-100">
+                        <span class="text-base font-bold text-gray-900">Total to Pay</span>
+                        <span class="text-2xl font-extrabold text-brand-700">₹{{ cart.total }}</span>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full bg-brand-600 text-white py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-200 hover:bg-brand-700 hover:-translate-y-1 transition transform flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-lock-key"></i>
+                        Confirm Order
+                    </button>
+
+                    <p class="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1">
+                        <i class="ph-fill ph-shield-check text-brand-500"></i>
+                        100% Secure Transaction
+                    </p>
+                </div>
+            </div>
+
+        </form>
     </div>
-  {% endif %}
-
-  <button class="bg-green-600 text-white px-6 py-2 rounded">
-    Place Order
-  </button>
-</form>
+</div>
 {% endblock %}

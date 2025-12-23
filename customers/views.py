@@ -82,8 +82,8 @@ def add_to_cart(request, medicine_id):
 
     cart_item.save()
     return redirect("customers:cart")
-@login_required
 
+@login_required
 def cart_view(request):
     cart, _ = Cart.objects.get_or_create(user=request.user)
 
@@ -144,17 +144,22 @@ def checkout(request):
     )
 
     if request.method == "POST":
-        address_text = request.POST.get("address", "").strip()
+        # === UPDATED SECTION START ===
+        line1 = request.POST.get("line1", "").strip()
+        line2 = request.POST.get("line2", "").strip()
+        city = request.POST.get("city", "").strip()
         pincode = request.POST.get("pincode", "").strip()
+        phone = request.POST.get("phone", "").strip()
         prescription = request.FILES.get("prescription")
 
-        # basic validation
-        if not address_text or not pincode:
+        # Basic validation (Ensure required fields are present)
+        if not line1 or not city or not pincode or not phone:
             return render(request, "customers/checkout.html", {
                 "cart": cart,
                 "prescription_required": prescription_required,
-                "error": "Address and pincode are required.",
+                "error": "Address, City, Pincode, and Phone are required.",
             })
+        # === UPDATED SECTION END ===
 
         if prescription_required and not prescription:
             return render(request, "customers/checkout.html", {
@@ -163,11 +168,14 @@ def checkout(request):
                 "error": "Prescription is required for one or more medicines.",
             })
 
-        # create address
+        # create address (Matches your new Model)
         address = Address.objects.create(
             user=request.user,
-            address=address_text,
-            pincode=pincode
+            line1=line1,
+            line2=line2,
+            city=city,
+            pincode=pincode,
+            phone=phone
         )
 
         # create order

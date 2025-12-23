@@ -1,62 +1,153 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="grid md:grid-cols-2 gap-8 items-start">
+<div class="bg-gray-50/50 min-h-screen pb-16">
 
-  <!-- IMAGE -->
-  <div class="bg-white border rounded p-4">
-    {% if medicine.image %}
-      <img
-        src="{{ medicine.image.url }}"
-        alt="{{ medicine.name }}"
-        class="w-full h-72 object-cover rounded"
-      >
-    {% else %}
-      <div class="h-72 flex items-center justify-center text-gray-400">
-        No image available
-      </div>
-    {% endif %}
-  </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <nav class="flex items-center text-sm text-gray-500">
+            <a href="/" class="hover:text-brand-600 transition">Home</a>
+            <i class="ph ph-caret-right mx-2 text-xs"></i>
+            <a href="{% url 'customers:category-list' %}" class="hover:text-brand-600 transition">Categories</a>
+            {% if medicine.category %}
+                <i class="ph ph-caret-right mx-2 text-xs"></i>
+                <a href="{% url 'customers:medicine-by-category' medicine.category.slug %}" class="hover:text-brand-600 transition">{{ medicine.category.name }}</a>
+            {% endif %}
+            <i class="ph ph-caret-right mx-2 text-xs"></i>
+            <span class="font-medium text-gray-900 truncate max-w-[150px] sm:max-w-xs">{{ medicine.name }}</span>
+        </nav>
+    </div>
 
-  <!-- DETAILS -->
-  <div>
-    <h1 class="text-3xl font-bold">{{ medicine.name }}</h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
 
-    {% if medicine.category %}
-      <p class="text-sm text-gray-500 mt-1">
-        Category: {{ medicine.category.name }}
-      </p>
-    {% endif %}
+            <div class="space-y-4">
+                <div class="bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-center h-[400px] relative group overflow-hidden">
+                    {% if medicine.image %}
+                        <img src="{{ medicine.image.url }}" alt="{{ medicine.name }}" 
+                             class="max-h-[80%] max-w-[80%] object-contain transition duration-500 group-hover:scale-110 mix-blend-multiply">
+                    {% else %}
+                        <div class="text-center text-gray-400">
+                            <i class="ph-duotone ph-image text-6xl mb-2"></i>
+                            <p class="text-sm">No image available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
 
-    <p class="text-gray-700 mt-4 leading-relaxed">
-      {{ medicine.description|default:"No description available." }}
-    </p>
+            <div class="flex flex-col">
+                
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    {% if medicine.category %}
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-blue-50 text-blue-600">
+                            {{ medicine.category.name }}
+                        </span>
+                    {% endif %}
+                    
+                    {% if medicine.is_prescription_required %}
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-50 text-amber-700 border border-amber-100 flex items-center gap-1">
+                            <i class="ph-fill ph-prescription"></i> Rx Required
+                        </span>
+                    {% else %}
+                        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-green-50 text-green-700 border border-green-100">
+                            OTC Product
+                        </span>
+                    {% endif %}
+                </div>
 
-    <p class="mt-6 text-2xl font-semibold">
-      ₹{{ medicine.price }}
-    </p>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-2">
+                    {{ medicine.name }}
+                </h1>
+                <p class="text-sm text-gray-500 mb-6">
+                    Mfr: <span class="font-medium text-gray-700">Generic / Standard</span> </p>
 
-    <!-- PRESCRIPTION NOTICE -->
-    {% if medicine.is_prescription_required %}
-      <div class="mt-4 p-3 bg-red-50 border border-red-200 rounded">
-        <p class="text-red-600 text-sm font-medium">
-          ⚠ Prescription required for this medicine
-        </p>
-      </div>
-    {% endif %}
+                <hr class="border-gray-100 mb-6">
 
-    <!-- STOCK & ACTION -->
-    {% if medicine.in_stock %}
-      <p class="mt-4 text-green-600 font-semibold">✔ In stock</p>
+                <div class="mb-8">
+                    <div class="flex items-end gap-2 mb-2">
+                        <span class="text-4xl font-bold text-brand-700">₹{{ medicine.price }}</span>
+                        <span class="text-sm text-gray-500 mb-1">inclusive of all taxes</span>
+                    </div>
 
-      <a href="{% url 'customers:add-to-cart' medicine.id %}"
-         class="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-700 transition">
-        Add to Cart
-      </a>
-    {% else %}
-      <p class="mt-4 text-red-600 font-semibold">✖ Out of stock</p>
-    {% endif %}
+                    {% if medicine.in_stock %}
+                        <p class="text-sm font-medium text-emerald-600 flex items-center gap-1">
+                            <i class="ph-fill ph-check-circle"></i> In Stock & Ready to Ship
+                        </p>
+                    {% else %}
+                        <p class="text-sm font-medium text-red-500 flex items-center gap-1">
+                            <i class="ph-fill ph-x-circle"></i> Currently Out of Stock
+                        </p>
+                    {% endif %}
+                </div>
 
-  </div>
+                {% if medicine.is_prescription_required %}
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-8">
+                        <div class="flex items-start gap-3">
+                            <i class="ph-fill ph-warning-circle text-amber-600 text-xl mt-0.5"></i>
+                            <div>
+                                <h4 class="text-sm font-bold text-amber-800">Prescription Required</h4>
+                                <p class="text-xs text-amber-700 mt-1 leading-relaxed">
+                                    Please keep your doctor's prescription handy. You may be asked to upload it during checkout or upon delivery.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="mt-auto">
+                    {% if medicine.in_stock %}
+                        <div class="flex gap-4">
+                            <a href="{% url 'customers:add-to-cart' medicine.id %}" 
+                               class="flex-1 bg-brand-600 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5 transition transform flex items-center justify-center gap-2">
+                                <i class="ph-bold ph-shopping-cart"></i> Add to Cart
+                            </a>
+                        </div>
+                    {% else %}
+                         <button disabled class="w-full bg-gray-100 text-gray-400 text-lg font-bold py-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-bell-slash"></i> Out of Stock
+                        </button>
+                    {% endif %}
+
+                    <div class="grid grid-cols-3 gap-2 mt-8 border-t border-gray-100 pt-6">
+                        <div class="text-center">
+                            <i class="ph-duotone ph-shield-check text-2xl text-brand-600 mb-1"></i>
+                            <p class="text-[10px] font-medium text-gray-500 uppercase">100% Genuine</p>
+                        </div>
+                        <div class="text-center border-l border-gray-100">
+                            <i class="ph-duotone ph-truck text-2xl text-brand-600 mb-1"></i>
+                            <p class="text-[10px] font-medium text-gray-500 uppercase">Fast Delivery</p>
+                        </div>
+                        <div class="text-center border-l border-gray-100">
+                            <i class="ph-duotone ph-lock-key text-2xl text-brand-600 mb-1"></i>
+                            <p class="text-[10px] font-medium text-gray-500 uppercase">Secure Payment</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="mt-8 bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <i class="ph-duotone ph-article text-brand-600"></i> Product Details
+            </h3>
+            <div class="prose prose-sm md:prose-base text-gray-600 leading-relaxed max-w-none">
+                {% if medicine.description %}
+                    {{ medicine.description|linebreaks }}
+                {% else %}
+                    <p class="italic text-gray-400">No additional description provided for this medicine.</p>
+                {% endif %}
+            </div>
+            
+            <div class="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <h4 class="text-sm font-bold text-blue-800 mb-2">Safety Information</h4>
+                <ul class="list-disc list-inside text-xs text-blue-700 space-y-1">
+                    <li>Read the label carefully before use.</li>
+                    <li>Keep out of reach of children.</li>
+                    <li>Store in a cool and dry place away from direct sunlight.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
 </div>
 {% endblock %}
