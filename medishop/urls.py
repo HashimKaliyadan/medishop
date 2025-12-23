@@ -4,10 +4,15 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('customers.urls')),
-    path('users/', include('users.urls')),
-    path('manager/', include('managers.urls')),
+    path("admin/", admin.site.urls),
+
+    # smart role-based redirect (logo / login redirect)
+    path("", include("main.urls")),
+
+    # apps
+    path("users/", include("users.urls")),
+    path("manager/", include("managers.urls")),
+    path("", include("customers.urls")),
 ]
 
 if settings.DEBUG:

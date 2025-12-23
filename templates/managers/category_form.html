@@ -1,14 +1,111 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">
-  {% if is_edit %}Edit{% else %}Add{% endif %} Category
-</h1>
+<div class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
 
-<form method="post" class="space-y-4">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
-</form>
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">
+                {% if is_edit %}Edit Category{% else %}Create Category{% endif %}
+            </h1>
+            <p class="text-sm text-gray-500">Organize your medicines into groups.</p>
+        </div>
 
-<a href="{% url 'managers:category-list' %}" class="text-blue-600 underline">Back</a>
+        <a href="{% url 'managers:category-list' %}"
+           class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition bg-white border border-gray-200 px-4 py-2 rounded-lg hover:bg-gray-50 shadow-sm">
+            <i class="ph-bold ph-arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl shadow-gray-100 border border-gray-100 overflow-hidden relative">
+        
+        <div class="h-2 bg-gradient-to-r from-brand-400 to-brand-600 w-full"></div>
+
+        <form method="post" class="p-8 space-y-8">
+            {% csrf_token %}
+
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-1 flex items-center gap-2">
+                        <i class="ph-duotone ph-tag text-brand-600"></i> Category Name
+                    </label>
+                    <div class="relative">
+                        {{ form.name }}
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-900 mb-1 flex items-center gap-2">
+                        <i class="ph-duotone ph-link text-brand-600"></i> URL Slug
+                    </label>
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="text-gray-400 text-sm font-mono">/category/</span>
+                        </div>
+                        {{ form.slug }}
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                        <i class="ph-fill ph-info"></i> Used in the browser address bar (e.g /category/pain-relief)
+                    </p>
+                </div>
+            </div>
+
+            <hr class="border-gray-100">
+
+            <div>
+                <label class="block text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                    <i class="ph-duotone ph-eye text-brand-600"></i> Visibility Status
+                </label>
+                
+                <div class="bg-gray-50 rounded-xl p-4 border border-gray-200 flex items-center justify-between group hover:border-brand-300 transition cursor-pointer">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-900">Active Status</span>
+                        <span class="text-xs text-gray-500">Show this category to customers?</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            {{ form.is_active }}
+                            </label>
+                        <span class="text-sm font-medium text-gray-700">Yes</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit"
+                        class="w-full flex items-center justify-center gap-2 bg-brand-600 text-white px-6 py-3.5 rounded-xl font-bold shadow-lg shadow-brand-200 hover:bg-brand-700 hover:shadow-xl transition transform hover:-translate-y-0.5">
+                    {% if is_edit %}
+                        <i class="ph-bold ph-check-circle"></i> Update Category
+                    {% else %}
+                        <i class="ph-bold ph-plus-circle"></i> Create Category
+                    {% endif %}
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Style Text Inputs
+        const inputs = document.querySelectorAll('input[type="text"], input[type="number"]');
+        inputs.forEach(input => {
+            input.classList.add('w-full', 'bg-white', 'border', 'border-gray-300', 'text-gray-900', 'text-sm', 'rounded-lg', 'focus:ring-2', 'focus:ring-brand-500', 'focus:border-brand-500', 'block', 'p-3', 'transition', 'shadow-sm');
+            
+            // Add padding for the slug prefix
+            if(input.name === 'slug') {
+                input.classList.add('pl-20'); 
+            }
+        });
+
+        // Style Checkbox
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(box => {
+            box.classList.add('w-6', 'h-6', 'text-brand-600', 'bg-white', 'border-gray-300', 'rounded', 'focus:ring-brand-500', 'cursor-pointer');
+        });
+    });
+</script>
 {% endblock %}

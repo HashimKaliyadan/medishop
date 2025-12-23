@@ -1,54 +1,144 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Medicines</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
 
-<a href="{% url 'managers:medicine-add' %}"
-   class="inline-block mb-4 bg-green-600 text-white px-3 py-1 rounded">
-  + Add Medicine
-</a>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Medicine Inventory</h1>
+            <p class="text-sm text-gray-500 mt-1">Manage stock levels, pricing, and product details.</p>
+        </div>
 
+        <div class="flex items-center gap-3">
+            <a href="{% url 'managers:medicine-add' %}"
+               class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5 transition transform">
+                <i class="ph-bold ph-plus"></i>
+                <span>Add Medicine</span>
+            </a>
+        </div>
+    </div>
 
-<table class="w-full border-collapse">
-  <thead>
-    <tr class="bg-gray-100">
-      <th class="border p-2 text-left">Name</th>
-      <th class="border p-2 text-left">Category</th>
-      <th class="border p-2 text-left">Price</th>
-      <th class="border p-2 text-left">Stock</th>
-      <th class="border p-2 text-left">Prescription</th>
-      <th class="border p-2">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for m in medicines %}
-      <tr>
-        <td class="border p-2">{{ m.name }}</td>
-        <td class="border p-2">{{ m.category.name }}</td>
-        <td class="border p-2">₹{{ m.price }}</td>
-        <td class="border p-2">
-          {% if m.in_stock %}In stock{% else %}Out{% endif %}
-        </td>
-        <td class="border p-2">
-          {% if m.is_prescription_required %}Required{% else %}No{% endif %}
-        </td>
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         
-        <td class="border p-2">
-            <a href="{% url 'managers:medicine-edit' m.pk %}"
-            class="text-blue-600 underline mr-2">Edit</a>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse table-fixed min-w-[900px]">
+                <thead>
+                    <tr class="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                        <th class="w-[30%] px-6 py-4 text-left">Product Name</th>
+                        <th class="w-[15%] px-6 py-4 text-left">Category</th>
+                        <th class="w-[10%] px-6 py-4 text-left">Price</th>
+                        <th class="w-[15%] px-6 py-4 text-center">Stock Status</th>
+                        <th class="w-[15%] px-6 py-4 text-center">Rx Required</th>
+                        <th class="w-[15%] px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
 
-            <a href="{% url 'managers:medicine-delete' m.pk %}"
-            class="text-red-600 underline">Delete</a>
-        </td>
+                <tbody class="divide-y divide-gray-100">
+                    {% for m in medicines %}
+                    <tr class="group hover:bg-gray-50/80 transition duration-150">
+                        
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
+                                    {% if m.image %}
+                                        <img src="{{ m.image.url }}" alt="{{ m.name }}" class="w-full h-full object-cover">
+                                    {% else %}
+                                        <i class="ph-duotone ph-pill text-2xl text-gray-400"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-gray-900 truncate" title="{{ m.name }}">
+                                        {{ m.name }}
+                                    </p>
+                                    <p class="text-xs text-gray-400 font-mono truncate">
+                                        /{{ m.slug }}
+                                    </p>
+                                </div>
+                            </div>
+                        </td>
 
-      </tr>
-    {% empty %}
-      <tr>
-        <td colspan="5" class="p-4 text-center text-gray-500">
-          No medicines added yet.
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                {{ m.category.name }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4">
+                            <span class="font-bold text-gray-900">₹{{ m.price }}</span>
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            {% if m.in_stock %}
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                    <i class="ph-fill ph-check-circle"></i>
+                                    In Stock
+                                </div>
+                            {% else %}
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100">
+                                    <i class="ph-fill ph-x-circle"></i>
+                                    Out of Stock
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            {% if m.is_prescription_required %}
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100" title="Prescription Required">
+                                    <i class="ph-fill ph-prescription"></i>
+                                    Required
+                                </div>
+                            {% else %}
+                                <span class="text-xs text-gray-400 font-medium">
+                                    — OTC —
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{% url 'managers:medicine-edit' m.pk %}" 
+                                   class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition"
+                                   title="Edit Medicine">
+                                    <i class="ph-bold ph-pencil-simple text-lg"></i>
+                                </a>
+                                
+                                <a href="{% url 'managers:medicine-delete' m.pk %}" 
+                                   class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                   title="Delete Medicine">
+                                    <i class="ph-bold ph-trash text-lg"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-16 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                    <i class="ph-duotone ph-first-aid-kit text-3xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-gray-900 font-medium text-lg mb-1">No medicines found</h3>
+                                <p class="text-gray-500 text-sm mb-6 max-w-sm">
+                                    Your inventory is currently empty. Add your first medicine to start selling.
+                                </p>
+                                <a href="{% url 'managers:medicine-add' %}" class="bg-brand-600 text-white px-6 py-2 rounded-lg hover:bg-brand-700 transition">
+                                    Add First Medicine
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if medicines %}
+        <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-400 flex justify-between items-center">
+            <span>Total Items: {{ medicines|length }}</span>
+            <span>Sorted by Name</span>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}

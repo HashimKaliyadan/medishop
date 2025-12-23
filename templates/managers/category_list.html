@@ -1,29 +1,111 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h1 class="text-2xl font-bold mb-4">Categories</h1>
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
 
-<a href="{% url 'managers:category-add' %}"
-   class="inline-block mb-4 bg-green-600 text-white px-3 py-1 rounded">
-  + Add Category
-</a>
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Categories</h1>
+            <p class="text-sm text-gray-500 mt-1">Organize your medicines.</p>
+        </div>
 
-<table class="w-full border-collapse">
-  <tr class="bg-gray-100">
-    <th class="border p-2 text-left">Name</th>
-    <th class="border p-2 text-left">Active</th>
-    <th class="border p-2 text-left">Actions</th>
-  </tr>
-  {% for c in categories %}
-  <tr>
-    <td class="border p-2">{{ c.name }}</td>
-    <td class="border p-2">{{ c.is_active }}</td>
-    <td class="border p-2">
-      <a href="{% url 'managers:category-edit' c.pk %}" class="text-blue-600 underline mr-2">Edit</a>
-      <a href="{% url 'managers:category-delete' c.pk %}" class="text-red-600 underline">Delete</a>
-    </td>
-  </tr>
-  {% empty %}
-  <tr><td colspan="3" class="p-4 text-center text-gray-500">No categories yet.</td></tr>
-  {% endfor %}
-</table>
+        <a href="{% url 'managers:category-add' %}"
+           class="inline-flex items-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-brand-200 hover:bg-brand-700 hover:-translate-y-0.5 transition transform">
+            <i class="ph-bold ph-plus"></i>
+            <span>Add New</span>
+        </a>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse table-fixed">
+                <thead>
+                    <tr class="bg-gray-50/50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                        <th class="w-[40%] px-6 py-4 text-left">Category Name</th>
+                        <th class="w-[25%] px-6 py-4 text-center">URL Slug</th>
+                        <th class="w-[20%] px-6 py-4 text-center">Status</th>
+                        <th class="w-[15%] px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+                    {% for c in categories %}
+                    <tr class="group hover:bg-gray-50/80 transition duration-150">
+                        
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-xl shrink-0">
+                                    <i class="ph-duotone ph-squares-four"></i>
+                                </div>
+                                <span class="font-semibold text-gray-900 truncate" title="{{ c.name }}">
+                                    {{ c.name }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            <code class="px-2 py-1 bg-gray-100 rounded text-xs text-gray-500 font-mono border border-gray-200">
+                                /{{ c.slug|truncatechars:15 }}
+                            </code>
+                        </td>
+
+                        <td class="px-6 py-4 text-center">
+                            {% if c.is_active %}
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                    Active
+                                </div>
+                            {% else %}
+                                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                    Hidden
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{% url 'managers:category-edit' c.pk %}" 
+                                   class="p-2 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition"
+                                   title="Edit">
+                                    <i class="ph-bold ph-pencil-simple text-lg"></i>
+                                </a>
+                                
+                                <a href="{% url 'managers:category-delete' c.pk %}" 
+                                   class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                   title="Delete">
+                                    <i class="ph-bold ph-trash text-lg"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="w-14 h-14 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                                    <i class="ph-duotone ph-folder-dashed text-3xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-gray-900 font-medium text-sm">No categories yet</h3>
+                                <a href="{% url 'managers:category-add' %}" class="text-brand-600 text-sm hover:underline mt-1">
+                                    Create one now
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if categories %}
+        <div class="px-6 py-3 border-t border-gray-100 bg-gray-50/50 text-xs text-gray-400 flex justify-between items-center">
+            <span>Total: {{ categories|length }}</span>
+            <span>Sorted by Name</span>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
 {% endblock %}
