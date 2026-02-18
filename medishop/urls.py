@@ -13,6 +13,8 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("manager/", include("managers.urls")),
     path("", include("customers.urls")),
+    # API endpoints for frontend
+    path("api/", include("customers.api_urls")),
 ]
 
 if settings.DEBUG:
