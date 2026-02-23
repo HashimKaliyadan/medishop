@@ -14,7 +14,7 @@ urlpatterns = [
     path("manager/", include("managers.urls")),
     path("", include("customers.urls")),
     # API endpoints for frontend
-    path("api/", include("customers.api_urls")),
+    path("api/", include("customers.urls")),
 ]
 
 if settings.DEBUG:
